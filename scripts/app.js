@@ -8,14 +8,13 @@ define(function (require) {
 
 	$(function() {
 
-		function displayPromotion(promotion, year, callback) {
+		function displayPromotion(promotion, year) {
 			$.get('templates/promotion.mustache', function(template) {
 				var html = Mustache.to_html(template, { 
 					name: promotion,
 					year: year
 				});
 				$("body").append(html);
-				callback();
 			});
 		}
 
