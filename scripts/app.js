@@ -22,7 +22,7 @@ define(function (require) {
 						}
 					}
 				} else {
-					$("body").append(html);
+					$("div[data-role='content']").append(html);
 				}
 			});
 		}
