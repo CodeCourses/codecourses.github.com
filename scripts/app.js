@@ -4,7 +4,7 @@ define(function (require) {
 	var ORGANIZATION = "CodeCourses";
 
 	var Mustache = require("lib/mustache");
-	var GitHub = require("github").GitHub;
+	var GitHub = require("github_adapter").GitHubAdapter;
 
 	$(function() {
 
@@ -14,7 +14,16 @@ define(function (require) {
 					name: promotion,
 					year: year
 				});
-				$("body").append(html);
+				if($("section[id|='#promotion']").length) {
+					for(var index = 1; index <= PROMOTIONS.length; index += 1) {
+						var currentPromotion = $("#promotion_" + index);
+						if(currentPromotion.length && year < index) {
+							currentPromotion.before(html);
+						}
+					}
+				} else {
+					$("body").append(html);
+				}
 			});
 		}
 
@@ -33,27 +42,23 @@ define(function (require) {
 			});
 		}
 
+		function isValidCourse(courseYear) {
+			return typeof courseYear === "number" && courseYear > 0 && courseYear < PROMOTIONS.length;
+		}
+
 		PROMOTIONS.forEach( function(promotion, index) {
 			displayPromotion(promotion, index + 1);
 		});
 
 		GitHub.getOrganizationRepositories(ORGANIZATION, function(repositories) {
 			repositories.forEach( function(repository) {
-				var courseCode = repository.name;
-				var courseName = repository.description;
+				var courseCode = repository.courseCode;
 				var courseYear = parseInt(courseCode.charAt(0));
-				if(typeof courseYear === "number" && courseYear > 0 && courseYear < PROMOTIONS.length) {
-					displayCourse(courseYear, {
-						code: courseCode,
-						name: courseName,
-						htmlRepositoryUrl: repository.html_url
-					}, function() {
+				if(isValidCourse(courseYear)) {
+					displayCourse(courseYear, repository, function() {
 						GitHub.getRepositoryFiles(ORGANIZATION, courseCode, function(files) {
 							files.forEach( function(file) {
-								displayCourseFile(courseCode, {
-									url: file._links.html + "?raw=true",
-									name: file.name
-								});
+								displayCourseFile(courseCode, file);
 							});
 						});
 					});
