@@ -75,7 +75,7 @@ define(function (require) {
 			$.mobile.changePage("#course-page", { changeHash: false });
 			GitHub.getRepository(ORGANIZATION, courseCode, function(repository) {
 				$("#course-page > header > h1 > span.courseCode").text(repository.courseCode);
-				$("#course-page > a.repository").attr("href", repository.htmlRepositoryUrl);
+				$("#course-page a.repository").attr("href", repository.htmlRepositoryUrl);
 				$("#course-page .course_files").html("");
 				GitHub.getRepositoryFiles(ORGANIZATION, repository.courseCode, function(files) {
 					var filesToDisplay = files.length;
