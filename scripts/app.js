@@ -6,7 +6,7 @@ define(function (require) {
 	var Mustache = require("lib/mustache");
 	var GitHub = require("github_adapter").GitHubAdapter;
 
-	$(function() {
+	$(document).ready( function() {
 
 		function displayPromotion(promotion, year) {
 			$.get('templates/promotion.mustache', function(template) {
@@ -22,7 +22,7 @@ define(function (require) {
 						}
 					}
 				} else {
-					$("div[data-role='content']").append(html);
+					$("#content").append(html);
 				}
 			});
 		}
@@ -30,7 +30,7 @@ define(function (require) {
 		function displayCourse(courseYear, course, callback) {
 			$.get('templates/course.mustache', function(template) {
 			    var html = Mustache.to_html(template, course);
-			    $("#promotion_" + courseYear).append(html);
+			    $("#promotion_" + courseYear).append(html).parent().trigger('refresh');
 			    callback();
 			});
 		}
@@ -39,6 +39,7 @@ define(function (require) {
 			$.get('templates/course_file.mustache', function(template) {
 			    var html = Mustache.to_html(template, file);
 			    $("#course_" + courseCode + " > .course_files").append(html);
+			    $(document.body).page('destroy').page();
 			});
 		}
 
