@@ -8,6 +8,9 @@ define(function(require, exports, module) {
 		},
 		getRepositoryFiles: function(organization, respositoryName, callback) {
 			$.get(GITHUB_HOST + "/repos/" + organization + "/" + respositoryName + "/contents/", callback);
+		},
+		getRepository: function(organization, respositoryName, callback) {
+			$.get(GITHUB_HOST + "/repos/" + organization + "/" + respositoryName, callback);
 		}
 	};
 

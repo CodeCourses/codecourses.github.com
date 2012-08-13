@@ -2,16 +2,18 @@ define(function(require, exports, module) {
 
 	var GitHub = require("github").GitHub;
 
+	function convertRepository(json) {
+		return {
+			courseCode: json.name,
+			courseName: json.description,
+			htmlRepositoryUrl: json.html_url
+		};
+	}
+
 	exports.GitHubAdapter = {
 		getOrganizationRepositories: function(organization, callback) {
 			GitHub.getOrganizationRepositories(organization, function(repositories) {
-				callback(repositories.map( function(repository) {
-					return {
-						courseCode: repository.name,
-						courseName: repository.description,
-						htmlRepositoryUrl: repository.html_url
-					};
-				}));
+				callback(repositories.map(convertRepository));
 			});
 		},
 		getRepositoryFiles: function(organization, repositoryName, callback) {
@@ -22,6 +24,11 @@ define(function(require, exports, module) {
 						name: file.name
 					};
 				}));
+			});
+		},
+		getRepository: function(organization, respositoryName, callback) {
+			GitHub.getRepository(organization, respositoryName, function(repository) {
+				callback(convertRepository(repository));
 			});
 		}
 	};
