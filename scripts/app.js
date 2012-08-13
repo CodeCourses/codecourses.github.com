@@ -72,8 +72,8 @@ define(function (require) {
 		}
 
 		function displayCoursePage(courseCode) {
-			showLoading();
 			$.mobile.changePage("#course-page", { changeHash: false });
+			showLoading();
 			GitHub.getRepository(ORGANIZATION, courseCode, function(repository) {
 				$("#course-page > header > h1 > span.courseCode").text(repository.courseCode);
 				$("#course-page a.repository").attr("href", repository.htmlRepositoryUrl);
@@ -98,7 +98,6 @@ define(function (require) {
 		$("#main-page").bind("pagebeforecreate", function(event) {
 			var hash = window.location.hash;
 			if(hash) {
-				showLoading();
 				displayCoursePage(hash.substr(1));
 				event.preventDefault();
 				event.stopImmediatePropagation();
