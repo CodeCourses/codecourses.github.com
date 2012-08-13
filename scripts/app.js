@@ -8,84 +8,80 @@ define(function (require) {
 
 	$(document).ready( function() {
 
-		function displayPromotion(promotion, year) {
+		function showLoading() {
+			$.mobile.showPageLoadingMsg();
+		}
+
+		function hideLoading() {
+			$.mobile.hidePageLoadingMsg()
+		}
+
+		function displayPromotions(promotions, callback) {
 			$.get('templates/promotion.mustache', function(template) {
-				var html = Mustache.to_html(template, { 
-					name: promotion,
-					year: year
+				promotions.forEach( function(promotion, index) {
+					displayPromotion(promotion, index + 1, template);
 				});
-				if($("section[id^='#promotion_']").length) {
-					for(var index = 1; index <= PROMOTIONS.length; index += 1) {
-						var currentPromotion = $("#promotion_" + index);
-						if(currentPromotion.length && year < index) {
-							currentPromotion.before(html);
-						}
-					}
-				} else {
-					$("#main-page-content").append(html);
-				}
+				if(callback) callback();
 			});
 		}
 
-		function displayCourse(courseYear, course, callback) {
+		function displayPromotion(promotion, year, template) {
+			var html = Mustache.to_html(template, { 
+				name: promotion,
+				year: year
+			});
+			$("#main-page-content").append(html);
+		}
+
+		function displayCourses(courses, callback) {
 			$.get('templates/course.mustache', function(template) {
-			    var html = Mustache.to_html(template, course);
-			    $("#promotion_" + courseYear + " .courses").append(html);
-			    callback();
+				courses.forEach( function(course) {
+					var courseCode = course.courseCode;
+					var courseYear = parseInt(courseCode.charAt(0));
+					if(isValidCourse(courseYear)) {
+						displayCourse(courseYear, course, template);
+					} else {
+						console.log(course.name + " is not a valid course repository.");
+					}
+				});
+				if(callback) callback();
 			});
 		}
 
-		function displayCourseFile(courseCode, file, callback) {
+		function displayCourse(courseYear, course, template) {
+			var html = Mustache.to_html(template, course);
+			$("#promotion_" + courseYear + " .courses").append(html);
+		}
+
+		function displayCourseFiles(courseCode, files, callback) {
 			$.get('templates/course_file.mustache', function(template) {
-			    var html = Mustache.to_html(template, file);
-			    $("#course-page .course_files").append(html);
-			    callback();
+				files.forEach( function(file) {
+					displayCourseFile(courseCode, file, template);
+				});
+				if(callback) callback();
 			});
+		}
+
+		function displayCourseFile(courseCode, file, template) {
+			var html = Mustache.to_html(template, file);
+			$("#course-page .course_files").append(html);
 		}
 
 		function isValidCourse(courseYear) {
 			return typeof courseYear === "number" && courseYear > 0 && courseYear < PROMOTIONS.length;
 		}
 
-
-		PROMOTIONS.forEach( function(promotion, index) {
-			displayPromotion(promotion, index + 1);
-		});
-
-		GitHub.getOrganizationRepositories(ORGANIZATION, function(repositories) {
-			var repositoriesToDisplay = 0;
-			repositories.forEach( function(repository) {
-				var courseCode = repository.courseCode;
-				var courseYear = parseInt(courseCode.charAt(0));
-				if(isValidCourse(courseYear)) {
-					repositoriesToDisplay += 1;
-					displayCourse(courseYear, repository, function() {
-						repositoriesToDisplay -= 1;
-						if(repositoriesToDisplay === 0) {
-							$("#main-page").page("destroy").page();
-						}
-					});
-				} else {
-					console.log(repository.name + " is not a valid CodeCourses repository.");
-				}
-			});
-		});
-
 		function displayCoursePage(courseCode) {
+			showLoading();
 			$.mobile.changePage("#course-page", { changeHash: false });
 			GitHub.getRepository(ORGANIZATION, courseCode, function(repository) {
 				$("#course-page > header > h1 > span.courseCode").text(repository.courseCode);
 				$("#course-page a.repository").attr("href", repository.htmlRepositoryUrl);
 				$("#course-page .course_files").html("");
 				GitHub.getRepositoryFiles(ORGANIZATION, repository.courseCode, function(files) {
-					var filesToDisplay = files.length;
-					files.forEach( function(file) {
-						displayCourseFile(repository.courseCode, file, function() {
-							filesToDisplay -= 1;
-							if(filesToDisplay === 0) {
-								$('#course-page .course_files').listview('refresh');
-							}
-						});
+					displayCourseFiles(repository.courseCode, files, function() {
+						$('#course-page .course_files').listview('refresh');
+						hideLoading();
 					});
 				});
 			});
@@ -102,10 +98,22 @@ define(function (require) {
 		$("#main-page").bind("pagebeforecreate", function(event) {
 			var hash = window.location.hash;
 			if(hash) {
+				showLoading();
 				displayCoursePage(hash.substr(1));
 				event.preventDefault();
 				event.stopImmediatePropagation();
 			}
+		});
+
+		showLoading();
+
+		displayPromotions(PROMOTIONS, function() {
+			GitHub.getOrganizationRepositories(ORGANIZATION, function(repositories) {
+				displayCourses(repositories, function() {
+					$("#main-page").page("destroy").page();
+					hideLoading();
+				});
+			});
 		});
 
 	});
