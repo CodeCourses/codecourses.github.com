@@ -83,10 +83,16 @@ define(function (require) {
 						/*$.mobile.changePage("#main-page", { changeHash: false });
 						$('#main-page .course_files').listview('refresh');*/
 						hideLoading();
+						if(isSmartphone()) { $("aside").hide(); }
 						$("#course-page-content > div").show();
+						$("#course-page-content > div").attr("id", courseCode);
 					});
 				});
 			});
+		}
+		
+		function isSmartphone() {
+			return (/iPhone|iPod|Android|opera mini|blackberry|palm os|palm|hiptop|avantgo|plucker|xiino|blazer|elaine|iris|3g_t|windows ce|opera mobi|windows ce; smartphone;|windows ce;iemobile/i.test(navigator.userAgent));
 		}
 
 		$("#main-page").bind("pagebeforecreate", function(event) {

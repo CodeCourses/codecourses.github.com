@@ -10,7 +10,7 @@
 		<script src="scripts/lib/jquerymobile/jquery.mobile-1.1.1.min.js"></script>
 		<script data-main="scripts/app" src="scripts/lib/require.js"></script>
 		<style>
-			#main-page-content { width: 25%; margin: 30px; float: left; }
+			nav { width: 25%; margin: 30px; float: left; }
 			#course-page-content { border-left: 1px solid #BBB;  padding-left: 10px; min-height: 300px;  }
 			#course-page-content > div { display: none; }
 			.repository { float: right; }
@@ -28,6 +28,11 @@
 				background-image: -o-linear-gradient(#D0D0D0,#DFDFDF);
 				background-image: linear-gradient(#D0D0D0,#DFDFDF);
 			}
+			
+			@media (orientation:portrait), (orientation:landscape) {
+				#main-page-content { width: 100%; }
+				#course-page-content > div:target { width: 100%; display: none; }
+			}
 		</style>
 		</head>
 	<body>
@@ -35,11 +40,11 @@
 			<header data-role="header">
 				<h1>SUPINFO - Code Courses</h1>
 			</header>
-			<aside id="nav" data-role="nav">
+			<nav data-role="nav">
 				<div id="main-page-content" data-role="collapsible-set">
 					
 				</div>
-			</aside>
+			</nav>
 			<div id="course-page-content" data-role="content">
 				<div>
 					<ul class="course_files ui-listview ui-listview-inset ui-corner-all ui-shadow" 
