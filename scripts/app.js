@@ -59,12 +59,13 @@ define(function (require) {
 					displayCourseFile(courseCode, file, template);
 				});
 				if(callback) callback();
+				$("#main-page .course_files").listview("refresh");
 			});
 		}
 
 		function displayCourseFile(courseCode, file, template) {
 			var html = Mustache.to_html(template, file);
-			$("#course-page .course_files").append(html);
+			$("#main-page .course_files").append(html);
 		}
 
 		function isValidCourse(courseYear) {
@@ -74,14 +75,15 @@ define(function (require) {
 		function displayCoursePage(courseCode) {
 			showLoading();
 			GitHub.getRepository(ORGANIZATION, courseCode, function(repository) {
-				$("#course-page > header > h1 > span.courseCode").text(repository.courseCode);
-				$("#course-page a.repository").attr("href", repository.htmlRepositoryUrl);
-				$("#course-page .course_files").html("");
+				$("#main-page > header > h1 > span.courseCode").text(repository.courseCode);
+				$("#main-page a.repository").attr("href", repository.htmlRepositoryUrl);
+				$("#main-page .course_files").html("");
 				GitHub.getRepositoryFiles(ORGANIZATION, repository.courseCode, function(files) {
 					displayCourseFiles(repository.courseCode, files, function() {
-						$.mobile.changePage("#course-page", { changeHash: false });
-						$('#course-page .course_files').listview('refresh');
+						/*$.mobile.changePage("#main-page", { changeHash: false });
+						$('#main-page .course_files').listview('refresh');*/
 						hideLoading();
+						$("#course-page-content > div").show();
 					});
 				});
 			});
@@ -112,6 +114,8 @@ define(function (require) {
 			window.location.hash = hash;
 			var courseCode = hash.substr(1);
 			displayCoursePage(courseCode);
+			$("li[id^='course_'] a").removeClass("selected");
+			$(this).addClass("selected");
 			event.preventDefault();
 		});
 
