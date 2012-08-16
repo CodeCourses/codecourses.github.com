@@ -83,7 +83,7 @@ define(function (require) {
 						/*$.mobile.changePage("#main-page", { changeHash: false });
 						$('#main-page .course_files').listview('refresh');*/
 						hideLoading();
-						if(isSmartphone()) { $("aside").hide(); }
+						if(isSmartphone()) { $("nav").hide(); }
 						$("#course-page-content > div").show();
 						$("#course-page-content > div").attr("id", courseCode);
 					});

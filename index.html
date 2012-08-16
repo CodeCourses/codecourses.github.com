@@ -10,7 +10,7 @@
 		<script src="scripts/lib/jquerymobile/jquery.mobile-1.1.1.min.js"></script>
 		<script data-main="scripts/app" src="scripts/lib/require.js"></script>
 		<style>
-			nav { width: 25%; margin: 30px; float: left; }
+			/* Common style */ 
 			#course-page-content { border-left: 1px solid #BBB;  padding-left: 10px; min-height: 300px;  }
 			#course-page-content > div { display: none; }
 			.repository { float: right; }
@@ -29,9 +29,30 @@
 				background-image: linear-gradient(#D0D0D0,#DFDFDF);
 			}
 			
-			@media (orientation:portrait), (orientation:landscape) {
-				nav { width: 100%; }
+			/* Tablets/Smartphones */
+			@media (max-width: 959px) {
+				nav { margin: 15px; width: auto;}
 				#course-page-content > div:target { width: 100%; display: none; }
+				header.ui-header.ui-bar-a > h1.ui-title { width: 100%; margin: .6em 0 .8em;}
+				div.ui-collapsible-content { padding: 10px 0 10px 10px; }
+				div.ui-collapsible-content > ul.courses.ui-listview 
+					> li.course div.ui-btn-text a { padding: 10px 40px 10px 10px; }
+				div.ui-collapsible-content > ul.courses.ui-listview 
+					> li.course div.ui-btn-text a > h2 {
+						width: 100%;
+						display: block;
+						margin: 0;
+						overflow: auto;
+						font-size: .9em;
+						white-space: normal;
+					}
+				div.ui-collapsible-content > ul.courses.ui-listview 
+					> li.course div.ui-btn-text a > img.ui-li-thumb { display: none; }
+			}
+			
+			/* Computer screen */
+			@media all and (min-width: 960px) {
+				nav { width: 25%; margin: 30px; float: left; }
 			}
 		</style>
 		</head>
